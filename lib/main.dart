@@ -1,25 +1,40 @@
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
 
 Uri url =
     Uri.parse('https://api.hgbrasil.com/finance?format=json&key=4617e091');
 
 void main() async {
-  runApp(MaterialApp(
-    theme: ThemeData(
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Home(),
+      theme: ThemeData(
         hintColor: Colors.amber,
         primaryColor: Colors.white,
-        inputDecorationTheme: const InputDecorationTheme(
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-          focusedBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.amber)),
-          hintStyle: TextStyle(color: Colors.amber),
-        )),
-    debugShowCheckedModeBanner: false,
-    home: const Home(),
-  ));
+        inputDecorationTheme: InputDecorationTheme(
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.white,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.amber,
+            ),
+          ),
+          hintStyle: TextStyle(
+            color: Colors.amber,
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 Future<Map> getData() async {
@@ -83,71 +98,101 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('\$ Conversor de Moedas'),
-        backgroundColor: Colors.amber,
         centerTitle: true,
+        title: Text('\$ Conversor de Moedas \$'),
+        backgroundColor: Colors.amber,
       ),
-      body: FutureBuilder<Map>(
-        future: getData(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return const Center(
+      body: FutureBuilder<Map?>(
+          future: getData(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+                return Center(
                   child: Text(
-                'Carregando dados...',
-                style: TextStyle(color: Colors.amber, fontSize: 25),
-                textAlign: TextAlign.center,
-              ));
-            default:
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text(
-                    'Erro ao carregar dados',
-                    style: TextStyle(color: Colors.amber, fontSize: 25),
+                    'Carregando dados...',
+                    style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 25,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 );
-              } else {
-                dolar = snapshot.data?['results']['currencies']['USD']['buy'];
-                euro = snapshot.data?['results']['currencies']['EUR']['buy'];
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      const Icon(Icons.monetization_on,
-                          size: 150, color: Colors.amber),
-                      buildTextField(
-                          'Reais', 'R\$ ', realController, _realChanged),
-                      const Divider(),
-                      buildTextField(
-                          'Dólares', 'US\$ ', dolarController, _dolarChanged),
-                      const Divider(),
-                      buildTextField(
-                          'Euros', '€ ', euroController, _euroChanged),
-                    ],
-                  ),
-                );
-              }
-          }
-        },
-      ),
+              default:
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Erro ao carregar dados...',
+                      style: TextStyle(
+                        color: Colors.amber,
+                        fontSize: 25,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                } else {
+                  dolar = snapshot.data!['results'][('currencies')][('USD')]
+                      [('buy')];
+                  euro = snapshot.data![('results')][('currencies')][('EUR')]
+                      [('buy')];
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Icon(
+                          Icons.monetization_on,
+                          size: 150,
+                          color: Colors.amber,
+                        ),
+                        Divider(),
+                        buildTextField(
+                          'Reais',
+                          'R\$ ',
+                          realController,
+                          _realChanged,
+                        ),
+                        Divider(),
+                        buildTextField(
+                          'Dólares',
+                          'US\$ ',
+                          dolarController,
+                          _dolarChanged,
+                        ),
+                        Divider(),
+                        buildTextField(
+                          'Euros',
+                          '€ ',
+                          euroController,
+                          _euroChanged,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+            }
+          }),
     );
   }
 }
 
 Widget buildTextField(
-    String label, String prefix, TextEditingController c, Function(String)? f) {
+    String label, String prefix, TextEditingController c, Function(String) f) {
   return TextField(
-    keyboardType: const TextInputType.numberWithOptions(decimal: true),
     controller: c,
-    style: const TextStyle(color: Colors.amber, fontSize: 20),
     decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.amber),
-        prefixText: prefix,
-        prefixStyle: const TextStyle(color: Colors.amber, fontSize: 20)),
-    onChanged: f!,
+      labelText: label,
+      labelStyle: TextStyle(color: Colors.amber),
+      border: OutlineInputBorder(),
+      prefixText: prefix,
+    ),
+    style: TextStyle(
+      color: Colors.amber,
+      fontSize: 25,
+    ),
+    onChanged: f,
+    keyboardType: TextInputType.numberWithOptions(
+      decimal: true,
+    ),
   );
 }
