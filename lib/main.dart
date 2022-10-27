@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -13,11 +10,11 @@ void main() async {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: const Home(),
       theme: ThemeData(
         hintColor: Colors.amber,
         primaryColor: Colors.white,
-        inputDecorationTheme: InputDecorationTheme(
+        inputDecorationTheme: const InputDecorationTheme(
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.white,
@@ -99,7 +96,7 @@ class _HomeState extends State<Home> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         centerTitle: true,
-        title: Text('\$ Conversor de Moedas \$'),
+        title: const Text('\$ Conversor de Moedas \$'),
         backgroundColor: Colors.amber,
       ),
       body: FutureBuilder<Map?>(
@@ -108,7 +105,7 @@ class _HomeState extends State<Home> {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
               case ConnectionState.waiting:
-                return Center(
+                return const Center(
                   child: Text(
                     'Carregando dados...',
                     style: TextStyle(
@@ -120,7 +117,7 @@ class _HomeState extends State<Home> {
                 );
               default:
                 if (snapshot.hasError) {
-                  return Center(
+                  return const Center(
                     child: Text(
                       'Erro ao carregar dados...',
                       style: TextStyle(
@@ -136,30 +133,30 @@ class _HomeState extends State<Home> {
                   euro = snapshot.data![('results')][('currencies')][('EUR')]
                       [('buy')];
                   return SingleChildScrollView(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.monetization_on,
                           size: 150,
                           color: Colors.amber,
                         ),
-                        Divider(),
+                        const Divider(),
                         buildTextField(
                           'Reais',
                           'R\$ ',
                           realController,
                           _realChanged,
                         ),
-                        Divider(),
+                        const Divider(),
                         buildTextField(
                           'Dólares',
                           'US\$ ',
                           dolarController,
                           _dolarChanged,
                         ),
-                        Divider(),
+                        const Divider(),
                         buildTextField(
                           'Euros',
                           '€ ',
@@ -182,16 +179,16 @@ Widget buildTextField(
     controller: c,
     decoration: InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: Colors.amber),
-      border: OutlineInputBorder(),
+      labelStyle: const TextStyle(color: Colors.amber),
+      border: const OutlineInputBorder(),
       prefixText: prefix,
     ),
-    style: TextStyle(
+    style: const TextStyle(
       color: Colors.amber,
       fontSize: 25,
     ),
     onChanged: f,
-    keyboardType: TextInputType.numberWithOptions(
+    keyboardType: const TextInputType.numberWithOptions(
       decimal: true,
     ),
   );
